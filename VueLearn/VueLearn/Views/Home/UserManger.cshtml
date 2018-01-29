@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "UserManger";
+}
+
+
+<script src="~/content/jquery-1.10.1.min.js"></script>
+
+
+
+<style>
+    .mytable {
+        margin-top: 5px;
+        width: 530px;
+        border: solid #6473ba;
+        text-align: center;
+        border-width: 1px 0px 0px 1px;
+    }
+
+        .mytable td {
+            border: solid #6473ba;
+            text-align: center;
+            border-width: 0px 1px 1px 0px;
+        }
+
+    .header {
+        background: #6473ba;
+        color: #eeeeee;
+    }
+
+    a {
+        color: blue;
+    }
+</style>
+
+
+
+<script>
+
+
+    $(function () {
+
+        $.get('/home/getdata', function (result) {
+
+            var needhtml = "";
+            $.each(result, function (index, item) {
+
+                needhtml += "<tr><td>" + item.UserName + "</td><td>" + item.Number + "</td><td>" + item.UClass + "</td></tr>";
+            });
+            $("#content").html(needhtml);
+
+            //ef   
+
+        })
+
+
+    });
+
+</script>
+
+
+
+<table class="mytable">
+
+    <tr class="header">
+        <td>用户名</td>
+        <td>学号</td>
+        <td>班级</td>
+    </tr>
+
+    <tbody id="content">
+    </tbody>
+
+</table>

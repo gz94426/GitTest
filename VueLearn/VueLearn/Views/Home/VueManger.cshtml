@@ -1,0 +1,159 @@
+﻿@{
+    ViewBag.Title = "VueManger";
+}
+
+
+<script src="~/content/vue2.2.4.js"></script>
+<script src="~/content/jquery-1.10.1.min.js"></script>
+<script src="~/content/jqPaginator.js"></script>
+<link href="~/css/page.css" rel="stylesheet" />
+<script src="~/content/layer/layer.js"></script>
+<style>
+    .mytable {
+        margin-top: 5px;
+        width: 730px;
+        border: solid #6473ba;
+        text-align: center;
+        border-width: 1px 0px 0px 1px;
+    }
+
+        .mytable td {
+            border: solid #6473ba;
+            text-align: center;
+            border-width: 0px 1px 1px 0px;
+        }
+
+    .header {
+        background: #6473ba;
+        color: #eeeeee;
+    }
+
+    a {
+        color: blue;
+    }
+</style>
+
+
+
+<div id="usertable">
+    
+<table  class="mytable">
+
+    <tr class="header">
+        <td>用户名</td>
+        <td>学号</td>
+        <td>班级</td>
+        <td>操作</td>
+    </tr>
+
+    <tr v-for="(item,index) in udata">
+        <td>{{item.UserName}}</td>
+        <td>{{item.Number}}</td>
+        <td>{{item.UClass}}</td>
+        <td><a href="#" @@click="deleteu(item)">删除</a>
+            <a href="#" @@click="updateu(item,index)">更新</a>
+        </td>
+    </tr>
+
+</table>
+
+
+<table id="updatetable" style="display:none;width:260px;margin:20px auto;text-align:center">
+    <tr>
+        <td>用户名</td>
+        <td><input type="text"  v-model="userinfo.UserName" /></td>
+    </tr>
+        <tr>
+        <td>学号</td>
+        <td><input type="text"  v-model="userinfo.Number" /></td>
+    </tr>
+</table>
+</div>
+
+
+
+
+
+<ul class="pagination" id="pagination1"></ul>
+
+
+<script>
+
+
+    //vue.js每次只会保留一个实例
+    var vm = new Vue({
+        el: '#usertable',
+        methods: {
+            updateu: function (item,index) {
+
+                //给更新提供数据源
+                vm.$data.userinfo = item;
+
+                //先保存一个更新之前的
+                var temp = $.extend({},item);
+
+                layer.open({
+                    type:1,
+                    title: '更新',
+                    area:["320","220"],
+                    content: $("#updatetable"),
+                    btn: ["确定", "取消"],
+                    yes: function () {
+                        alert("确定");
+                    },
+                    btn2: function ()
+                    {
+                        alert("取消");
+
+                        console.log(temp);
+                        //取消的时候变回来
+                        //item = temp;
+                        Vue.set(vm.$data.udata, index, temp);
+                    }
+                });
+
+            }
+
+        },
+        data: {
+            udata: [],
+            userinfo: {}
+        }
+    });
+
+
+    var getdata = function (_page) {
+
+        $.get('/home/getdata', { page: _page, rows: 10 }, function (result) {
+
+            //只改数据源  mvvm  vue.js,angular.js
+            vm.$data.udata = result;
+
+
+        });
+    }
+
+
+    $(function () {
+
+
+
+
+        $.jqPaginator('#pagination1', {
+            totalPages: 100,
+            visiblePages: 10,
+            currentPage: 1,
+            onPageChange: function (num, type) {
+
+                getdata(num);
+            }
+        });
+
+
+
+    });
+
+
+
+
+</script>
